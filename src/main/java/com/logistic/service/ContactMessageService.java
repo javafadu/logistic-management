@@ -1,11 +1,14 @@
 package com.logistic.service;
 
 import com.logistic.domain.ContactMessage;
+import com.logistic.dto.ContactMessageDTO;
 import com.logistic.dto.mapper.ContactMessageMapper;
 import com.logistic.dto.request.ContactMessageRequest;
 import com.logistic.repository.ContactMessageRepository;
 import io.swagger.v3.oas.models.info.Contact;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ContactMessageService {
@@ -24,4 +27,9 @@ public class ContactMessageService {
         contactMessageRepository.save(contactMessage);
     }
 
+    // Get All Contact Messages
+    public List<ContactMessageDTO> getAllContactMessages() {
+        List<ContactMessage> contactMessageList = contactMessageRepository.findAll();
+        return contactMessageMapper.contactMessageListToDTOList(contactMessageList);
+    }
 }
