@@ -6,6 +6,8 @@ import com.logistic.dto.mapper.ContactMessageMapper;
 import com.logistic.dto.request.ContactMessageRequest;
 import com.logistic.repository.ContactMessageRepository;
 import io.swagger.v3.oas.models.info.Contact;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,4 +34,24 @@ public class ContactMessageService {
         List<ContactMessage> contactMessageList = contactMessageRepository.findAll();
         return contactMessageMapper.contactMessageListToDTOList(contactMessageList);
     }
+
+
+    // Get All Contact Messages with Page
+    public Page<ContactMessageDTO> getAllContactMessagesWithPages(Pageable pageable) {
+
+            Page<ContactMessage> contactMessagePage = contactMessageRepository.findAll(pageable);
+            Page<ContactMessageDTO> pageDTO = getPageDTO(contactMessagePage);
+
+            return pageDTO;
+    }
+
+
+    // convert Page<ContactMessage> to Page<ContactMessageDTO>
+    private Page<ContactMessageDTO> getPageDTO(Page<ContactMessage> contactMessagePage) {
+        return contactMessagePage.map(
+                contactMessage -> contactMessageMapper.contactMessageToDTO(contactMessage)
+        );
+    }
+
+
 }
