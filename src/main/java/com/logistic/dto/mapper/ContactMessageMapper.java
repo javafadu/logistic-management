@@ -19,6 +19,7 @@ public interface ContactMessageMapper {
     @Mapping(target = "id", ignore = true)
     ContactMessage contactMessageRequestToContactMessage(ContactMessageRequest contactMessageRequest);
 
+    @Mapping(target="createDate", source = "createDate")
     List<ContactMessageDTO> contactMessageListToDTOList(List<ContactMessage> contactMessageList);
 
 

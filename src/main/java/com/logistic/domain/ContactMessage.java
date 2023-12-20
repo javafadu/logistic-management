@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -34,6 +36,14 @@ public class ContactMessage {
 
     @Column(length = 200, nullable = false)
     private String body;
+
+    @Column(nullable=false)
+    private LocalDateTime createDate;
+
+    @Column(nullable = false)
+    private String remoteAddress;
+
+
 
 
 }

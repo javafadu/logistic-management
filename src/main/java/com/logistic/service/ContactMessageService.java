@@ -4,13 +4,17 @@ import com.logistic.domain.ContactMessage;
 import com.logistic.dto.ContactMessageDTO;
 import com.logistic.dto.mapper.ContactMessageMapper;
 import com.logistic.dto.request.ContactMessageRequest;
+import com.logistic.exception.ResourceNotFoundException;
+import com.logistic.exception.messages.ErrorMessages;
 import com.logistic.repository.ContactMessageRepository;
-import io.swagger.v3.oas.models.info.Contact;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContactMessageService {
@@ -24,15 +28,21 @@ public class ContactMessageService {
     }
 
     // Save ContactMessageRequest as ContactMessage
-    public void saveMessage(ContactMessageRequest contactMessageRequest) {
+    public void saveMessage(ContactMessageRequest contactMessageRequest, String remoteAddress) {
         ContactMessage contactMessage = contactMessageMapper.contactMessageRequestToContactMessage(contactMessageRequest);
+        LocalDateTime today = LocalDateTime.now();
+        contactMessage.setRemoteAddress(remoteAddress);
+        contactMessage.setCreateDate(today);
         contactMessageRepository.save(contactMessage);
     }
 
     // Get All Contact Messages
-    public List<ContactMessageDTO> getAllContactMessages() {
+    public List<ContactMessageDTO> getAllContactMessagesDTO() {
+
         List<ContactMessage> contactMessageList = contactMessageRepository.findAll();
+
         return contactMessageMapper.contactMessageListToDTOList(contactMessageList);
+
     }
 
 
@@ -54,4 +64,9 @@ public class ContactMessageService {
     }
 
 
+    public ContactMessageDTO getContactMessageWithId(Long id) {
+       ContactMessage contactMessage = contactMessageRepository.findById(id).orElseThrow(()->
+               new ResourceNotFoundException(String.format(ErrorMessages.RESOURCE_NOT_FOUND_EXCEPTION,id)));
+        return contactMessageMapper.contactMessageToDTO(contactMessage);
+    }
 }

@@ -1,12 +1,11 @@
 package com.logistic.controller;
 
 
-import com.logistic.domain.ContactMessage;
 import com.logistic.dto.ContactMessageDTO;
 import com.logistic.dto.request.ContactMessageRequest;
 import com.logistic.dto.response.LogiResponse;
 import com.logistic.service.ContactMessageService;
-import io.swagger.v3.oas.models.info.Contact;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,9 +33,12 @@ public class ContactMessageController {
 
     // 1- Create Contact Message
     @PostMapping("/visitors")
-    public ResponseEntity<LogiResponse> createMessage(@Valid @RequestBody ContactMessageRequest contactMessageRequest) {
+    public ResponseEntity<LogiResponse> createMessage(HttpServletRequest request,
+                                                      @Valid @RequestBody ContactMessageRequest contactMessageRequest
+    ) {
 
-        contactMessageService.saveMessage(contactMessageRequest);
+        String remoteAddress = request.getRemoteAddr();
+        contactMessageService.saveMessage(contactMessageRequest, remoteAddress);
 
         LogiResponse response = new LogiResponse("Contact Message successfully created", true);
 
@@ -47,10 +49,11 @@ public class ContactMessageController {
     // 2- Get All Contact Messages
     @GetMapping("/all")
     public ResponseEntity<List<ContactMessageDTO>> getAllContactMessages() {
-        List<ContactMessageDTO> contactMessageDTOList = contactMessageService.getAllContactMessages();
+        List<ContactMessageDTO> contactMessageDTOList = contactMessageService.getAllContactMessagesDTO();
         // return new ResponseEntity<>(contactMessageDTOList, HttpStatus.OK);
         return ResponseEntity.ok(contactMessageDTOList);
     }
+
 
     // 3- Get All Contact Messages with Pageable
     @GetMapping("/pages")
@@ -66,6 +69,22 @@ public class ContactMessageController {
 
             return ResponseEntity.ok(contactMessagePages);
 
+    }
+
+    // 4- Get a Contact Message with Id (PathVariable)
+    @GetMapping("/{id}")
+    public ResponseEntity<ContactMessageDTO> getMessageWithPath(@PathVariable("id") Long id) {
+
+        ContactMessageDTO contactMessageDTO = contactMessageService.getContactMessageWithId(id);
+        return ResponseEntity.ok(contactMessageDTO);
+    }
+
+    // 4- Get a Contact Message with Id (RequestParam)
+    @GetMapping("/request")
+    public ResponseEntity<ContactMessageDTO> getMessageWithRequestParam(@RequestParam("id") Long id ) {
+
+        ContactMessageDTO contactMessageDTO = contactMessageService.getContactMessageWithId(id);
+        return ResponseEntity.ok(contactMessageDTO);
     }
 
 
