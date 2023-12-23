@@ -20,6 +20,8 @@ public class ApiResponseError {
 
 
     // Constructors (Not use no args constructor so we  will set it as private)
+    // No Arg Constructor is not reachable due to the it is private
+    // Always call the parameterized constructor
     private ApiResponseError() {
         timeStamp = LocalDateTime.now();
     }
