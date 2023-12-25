@@ -29,8 +29,7 @@ public class LogisticExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getMessage(), // message
                 request.getDescription(false)); // hide unnecessary information
 
-
-
+        return buildResponseEntity(error);
 
     }
 
