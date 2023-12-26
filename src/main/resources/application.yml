@@ -41,7 +41,7 @@ logging:
   level:
     '[org.springframework.web]': WARN
     '[org.hibernate]': INFO
-    '[logistic]': DEBUG
+    '[Logistic]': DEBUG
 
 management: #actuator
   endpoints:

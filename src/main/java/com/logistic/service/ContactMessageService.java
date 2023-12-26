@@ -69,4 +69,9 @@ public class ContactMessageService {
                new ResourceNotFoundException(String.format(ErrorMessages.RESOURCE_NOT_FOUND_EXCEPTION,id)));
         return contactMessageMapper.contactMessageToDTO(contactMessage);
     }
+
+    public void deleteMessage(Long id) {
+        ContactMessageDTO contactMessageDTO =  getContactMessageWithId(id);
+        contactMessageRepository.deleteById(id);
+    }
 }

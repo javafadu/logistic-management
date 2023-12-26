@@ -4,6 +4,7 @@ package com.logistic.controller;
 import com.logistic.dto.ContactMessageDTO;
 import com.logistic.dto.request.ContactMessageRequest;
 import com.logistic.dto.response.LogiResponse;
+import com.logistic.dto.response.ResponseMessage;
 import com.logistic.service.ContactMessageService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -40,7 +41,7 @@ public class ContactMessageController {
         String remoteAddress = request.getRemoteAddr();
         contactMessageService.saveMessage(contactMessageRequest, remoteAddress);
 
-        LogiResponse response = new LogiResponse("Contact Message successfully created", true);
+        LogiResponse response = new LogiResponse(ResponseMessage.CONTACT_MESSAGE_CREATE_RESPONSE, true);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
@@ -85,6 +86,14 @@ public class ContactMessageController {
 
         ContactMessageDTO contactMessageDTO = contactMessageService.getContactMessageWithId(id);
         return ResponseEntity.ok(contactMessageDTO);
+    }
+
+    // 5- Delete Message
+    @DeleteMapping("/{id}")
+    public ResponseEntity<LogiResponse> deleteMessage(@PathVariable Long id) { // only 1 data
+        contactMessageService.deleteMessage(id);
+        LogiResponse logiResponse = new LogiResponse(ResponseMessage.CONTACT_MESSAGE_DELETE_RESPONSE,true);
+        return ResponseEntity.ok(logiResponse);
     }
 
 
