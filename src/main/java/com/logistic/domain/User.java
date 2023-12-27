@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -29,13 +30,25 @@ public class User {
     @Column(length = 180, nullable = false, unique = true)
     private String email;
 
+    @Column(length = 180, nullable = true)
+    private String phone;
+
+    @Column(nullable = true)
+    private LocalDateTime birthDate;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> addresses;
+
     @Column(length = 120, nullable = false)
     private String password;
 
     @Column(nullable = false)
     private LocalDateTime registerDate;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @Column(length = 20)
+    private String status;
+
+    @ManyToMany
     @JoinTable(name="tbl_user_roles",
             joinColumns = @JoinColumn(name="user_id"),
             inverseJoinColumns = @JoinColumn(name="role_id"))

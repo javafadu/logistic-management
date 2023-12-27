@@ -1,6 +1,5 @@
 package com.logistic.domain;
 
-import com.logistic.domain.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,19 +12,26 @@ import lombok.Setter;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "tbl_roles")
-public class Role {
+@Table(name="tbl_companies")
+public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 30)
-    private RoleType type;
+    private String name;
 
-    public String toString() {
-        return ""+ type;
-    }
+    private String taxOffice;
+
+    private String taxNo;
+
+    private String phone;
+
+    private String email;
+
+    private String webSite;
+
+
+
 
 }

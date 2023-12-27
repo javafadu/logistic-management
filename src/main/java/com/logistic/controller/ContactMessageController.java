@@ -27,6 +27,7 @@ public class ContactMessageController {
     // use below construction injection
 
     private final ContactMessageService contactMessageService;
+
     public ContactMessageController(ContactMessageService contactMessageService) {
         this.contactMessageService = contactMessageService;
     }
@@ -62,13 +63,13 @@ public class ContactMessageController {
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestParam("sort") String prop, // order by
-            @RequestParam(value = "direction", required = false, defaultValue = "DESC")Sort.Direction direction) {
+            @RequestParam(value = "direction", required = false, defaultValue = "DESC") Sort.Direction direction) {
 
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction,prop));
-            Page<ContactMessageDTO> contactMessagePages = contactMessageService.getAllContactMessagesWithPages(pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, prop));
+        Page<ContactMessageDTO> contactMessagePages = contactMessageService.getAllContactMessagesWithPages(pageable);
 
-            return ResponseEntity.ok(contactMessagePages);
+        return ResponseEntity.ok(contactMessagePages);
 
     }
 
@@ -82,7 +83,7 @@ public class ContactMessageController {
 
     // 4- Get a Contact Message with Id (RequestParam)
     @GetMapping("/request")
-    public ResponseEntity<ContactMessageDTO> getMessageWithRequestParam(@RequestParam("id") Long id ) {
+    public ResponseEntity<ContactMessageDTO> getMessageWithRequestParam(@RequestParam("id") Long id) {
 
         ContactMessageDTO contactMessageDTO = contactMessageService.getContactMessageWithId(id);
         return ResponseEntity.ok(contactMessageDTO);
@@ -92,10 +93,21 @@ public class ContactMessageController {
     @DeleteMapping("/{id}")
     public ResponseEntity<LogiResponse> deleteMessage(@PathVariable Long id) { // only 1 data
         contactMessageService.deleteMessage(id);
-        LogiResponse logiResponse = new LogiResponse(ResponseMessage.CONTACT_MESSAGE_DELETE_RESPONSE,true);
+        LogiResponse logiResponse = new LogiResponse(ResponseMessage.CONTACT_MESSAGE_DELETE_RESPONSE, true);
         return ResponseEntity.ok(logiResponse);
     }
 
+    // 6- Update
+    @PutMapping("/{id}")
+    public ResponseEntity<LogiResponse> updateContactMessage(@PathVariable Long id,
+                                                             @Valid @RequestBody ContactMessageRequest contactMessageRequest) {
+        contactMessageService.updateContactMessage(id, contactMessageRequest);
+
+        LogiResponse logiResponse = new LogiResponse(ResponseMessage.CONTACT_MESSAGE_UPDATE_RESPONSE, true);
+        return ResponseEntity.ok(logiResponse);
+
+
+    }
 
 
 }

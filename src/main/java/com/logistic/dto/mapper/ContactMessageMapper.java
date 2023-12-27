@@ -15,6 +15,9 @@ public interface ContactMessageMapper {
     // get ContactMessage Pojo class and map to ContactMessageDTO
     ContactMessageDTO contactMessageToDTO(ContactMessage contactMessage);
 
+    // get ContactMessageDTO convert to ContactMessage
+    ContactMessage contactMessageDTOToContactMessage(ContactMessageDTO contactMessageDTO);
+
     // get ContactMessageRequest and map to ContactMessage pojo
     @Mapping(target = "id", ignore = true)
     ContactMessage contactMessageRequestToContactMessage(ContactMessageRequest contactMessageRequest);

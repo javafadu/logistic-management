@@ -74,4 +74,16 @@ public class ContactMessageService {
         ContactMessageDTO contactMessageDTO =  getContactMessageWithId(id);
         contactMessageRepository.deleteById(id);
     }
+
+    public void updateContactMessage(Long id, ContactMessageRequest contactMessageRequest) {
+        ContactMessageDTO foundContactMessageDTO = getContactMessageWithId(id);
+
+        foundContactMessageDTO.setName(contactMessageRequest.getName());
+        foundContactMessageDTO.setBody(contactMessageRequest.getBody());
+        foundContactMessageDTO.setSubject(contactMessageRequest.getSubject());
+        foundContactMessageDTO.setEmail(contactMessageRequest.getEmail());
+
+        ContactMessage updatedContactMessage = contactMessageMapper.contactMessageDTOToContactMessage(foundContactMessageDTO);
+        contactMessageRepository.save(updatedContactMessage);
+    }
 }
