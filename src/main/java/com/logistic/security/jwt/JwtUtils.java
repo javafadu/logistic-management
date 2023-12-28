@@ -1,38 +1,65 @@
 package com.logistic.security.jwt;
 
+import com.logistic.exception.messages.ErrorMessages;
+import io.jsonwebtoken.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.Optional;
 
+@Component
 public class JwtUtils {
 
-    // Get authenticated user information from service layer or controller layer
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    // Optional: prevent NullPointerException in case of any null results
-    public static Optional<String> getCurrentLoggedInUser() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
 
-        return Optional.ofNullable(extractPrincipal(authentication));
+    @Value("${logistic.app.jwtSecret}")
+    private String jwtSecret;
+    @Value("${logistic.app.jwtExpirationMs}")
+    private Long jwtExpirationMs;
+
+    // -- Generate JWT Token
+    public String generateJwtToken(UserDetails userDetails) {
+
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
     }
 
+    // -- Get E-mail (username) in jwtToken
+    public String getEmailFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
 
-    // Get userdetails (email) from authentication
-    private static String extractPrincipal(Authentication authentication) {
-        if(authentication==null) {
-            return null;
-        } else if(authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            return userDetails.getUsername();
-        } else if (authentication.getPrincipal() instanceof  String) {
-            return (String) authentication.getPrincipal();
+    // -- JWT Validate
+    public Boolean validateJwtToken(String token) {
+
+        try {
+            Jwts.parser()
+                    .setSigningKey(jwtSecret) // use jwtSecret key to sign with
+                    .parseClaimsJws(token); // header and payload in jwtToken
+            return true;
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException |
+                 IllegalArgumentException e) {
+            logger.error(String.format(
+                    ErrorMessages.JWTTOKEN_ERROR_MESSAGE, e.getMessage()));
+            return false;
         }
-        return null;
-
     }
-
 
 }
