@@ -7,58 +7,54 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-
 
 @Configuration // this is a configuration class
 @EnableMethodSecurity(prePostEnabled = true) // Method base security , hasRole issue
 public class SecurityConfig {
 
-    // -- AIM -- Encoder, Provider, AuthTokenFilter, JWTutil creation class
+    // --AIM-- Set PasswordEncoder, AuthenticationProvider, AuthenticationManager, AuthTokenFilter JwtUtils
 
     @Autowired
-    private  UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers (
-                                "/login"
-                                , "/register"
-                                , "/files/download/**"
-                                , "/files/display/**"
-                                , "/contactmessage/visitors"
-                                , "/actuator/info"
-                                , "/actuator/health"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer((oauth2) -> oauth2
-                        .jwt(Customizer.withDefaults())
-                )
-                .httpBasic(Customizer.withDefaults())
-                .addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-                .build();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeHttpRequests().requestMatchers (HttpMethod.OPTIONS, "/**").permitAll() // CORS
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers (
+                        "/login"
+                        , "/register"
+                        , "/files/download/**"
+                        , "/files/display/**"
+                        , "/car/visitors/**"
+                        , "/contactmessage/visitors"
+                        , "/actuator/info"
+                        , "/actuator/health"
+                ).permitAll()
+                .anyRequest().authenticated();
+
+
+        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
-
-
 
     // -- CORS Settings
     @Bean
@@ -127,7 +123,6 @@ public class SecurityConfig {
     public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter();
     }
-
 
 
 }
