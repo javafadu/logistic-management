@@ -32,7 +32,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // get JwtToken in the request, call belowe method
+        // get JwtToken in the request, call below method
         String jwtToken = parseJwt(request);
 
         // get currently logged in user
@@ -71,6 +71,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         return  antPathMatcher.match("/register", request.getServletPath()) ||
-                antPathMatcher.match("login",request.getServletPath());
+                antPathMatcher.match("/login",request.getServletPath());
     }
 }
