@@ -1,6 +1,7 @@
 package com.logistic.config;
 
 import com.logistic.security.jwt.AuthTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,12 +27,10 @@ public class SecurityConfig {
 
     // --AIM-- Set PasswordEncoder, AuthenticationProvider, AuthenticationManager, AuthTokenFilter JwtUtils
 
+    @Autowired
+    private  UserDetailsService userDetailsService;
 
-    private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -125,7 +124,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthTokenFilter authTokenFilter() {
-        return new AuthTokenFilter(null,null);
+        return new AuthTokenFilter();
     }
 
 

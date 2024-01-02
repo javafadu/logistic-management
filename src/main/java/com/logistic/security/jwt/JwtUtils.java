@@ -17,9 +17,9 @@ public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
 
-    @Value("${ascarrent.app.jwtSecret}")
+    @Value("${logistic.app.jwtSecret}")
     private String jwtSecret;
-    @Value("${ascarrent.app.jwtExpirationMs}")
+    @Value("${logistic.app.jwtExpirationMs}")
     private Long jwtExpirationMs;
 
     // -- Generate JWT Token

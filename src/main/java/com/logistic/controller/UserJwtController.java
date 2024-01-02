@@ -6,6 +6,7 @@ import com.logistic.dto.response.ResponseMessage;
 import com.logistic.security.jwt.JwtUtils;
 import com.logistic.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,15 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserJwtController {
 
-    private final JwtUtils jwtUtils;
-    private final UserService userService;
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private  JwtUtils jwtUtils;
+    @Autowired
+    private  UserService userService;
+    @Autowired
+    private  AuthenticationManager authenticationManager;
 
-    public UserJwtController(JwtUtils jwtUtils, UserService userService, AuthenticationManager authenticationManager) {
-        this.jwtUtils = jwtUtils;
-        this.userService = userService;
-        this.authenticationManager = authenticationManager;
-    }
+
 
 
     // REGISTER A USER by public
