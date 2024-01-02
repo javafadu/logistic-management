@@ -12,27 +12,31 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+// AIM : Convert our Users to UserDetails to be understood by Spring Security
+
 @Getter
 @Setter
 @AllArgsConstructor
+
 public class UserDetailsImpl implements UserDetails {
 
-    // 1- username
     private String email;
-    // 2- password
     private String password;
-    // 3- roles
-    private Collection<? extends GrantedAuthority> authorities;
+    private Collection<? extends  GrantedAuthority> authorities;
 
-    // convert our user --> userDetails (as defined in the Spring Security)
+
+    // user --> UserDetails
     public static UserDetailsImpl build(User user) {
         List<SimpleGrantedAuthority> authorities = user.getRoles()
                 .stream()
-                .map(role-> new SimpleGrantedAuthority(role.getType().name()))
+                .map(role -> new SimpleGrantedAuthority(role.getType().name()))
                 .collect(Collectors.toList());
 
         return new UserDetailsImpl(user.getEmail(), user.getPassword(), authorities);
     }
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

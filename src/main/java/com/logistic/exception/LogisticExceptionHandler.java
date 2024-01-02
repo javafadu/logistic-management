@@ -102,6 +102,17 @@ public class LogisticExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(error);
     }
 
+    // child class for exception -6
+    @ExceptionHandler(ConflictException.class)
+    protected ResponseEntity<Object> handleConflictException(ConflictException ex, WebRequest request) {
+        ApiResponseError error =  new ApiResponseError(
+                HttpStatus.CONFLICT,
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return buildResponseEntity(error);
+    }
+
 
 
     // Father Class for exception

@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class UserRegisterRequest {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern =
             "yyyy-MM-dd", timezone = "Turkey")
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
 
 
     @Size(min = 5, max = 180, message = "The email '${validatedValue}' must be between {min} and {max} chars long")

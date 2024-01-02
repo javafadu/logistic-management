@@ -1,7 +1,6 @@
 package com.logistic.config;
 
 import com.logistic.security.jwt.AuthTokenFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,25 +26,33 @@ public class SecurityConfig {
 
     // --AIM-- Set PasswordEncoder, AuthenticationProvider, AuthenticationManager, AuthTokenFilter JwtUtils
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+
+    private final UserDetailsService userDetailsService;
+
+    public SecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login"
-                                , "/register"
-                                , "/files/download/**"
-                                , "/files/display/**"
-                                , "/car/visitors/**"
-                                , "/contactmessage/visitors"
-                                , "/actuator/info"
-                                , "/actuator/health"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests().requestMatchers (HttpMethod.OPTIONS, "/**").permitAll() // CORS
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers (
+                        "/login"
+                        , "/register"
+                        , "/files/download/**"
+                        , "/files/display/**"
+                        , "/car/visitors/**"
+                        , "/contactmessage/visitors"
+                        , "/actuator/info"
+                        , "/actuator/health"
+                ).permitAll()
+                .anyRequest().authenticated();
+
 
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -115,9 +122,10 @@ public class SecurityConfig {
     }
 
     // -- AuthTokenFilter (create JWT Token and validate JWT Token)
+
     @Bean
     public AuthTokenFilter authTokenFilter() {
-        return new AuthTokenFilter();
+        return new AuthTokenFilter(null,null);
     }
 
 

@@ -5,14 +5,18 @@ import com.logistic.domain.enums.RoleType;
 import com.logistic.exception.ResourceNotFoundException;
 import com.logistic.exception.messages.ErrorMessages;
 import com.logistic.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RoleService {
 
-    @Autowired
-    private RoleRepository roleRepository;
+
+    private final RoleRepository roleRepository;
+
+    public RoleService(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
 
     public Role findByType(RoleType roleType) {
         Role role = roleRepository.findByType(roleType).orElseThrow(()->
@@ -20,5 +24,6 @@ public class RoleService {
 
         return role;
     }
+
 
 }

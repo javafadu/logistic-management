@@ -1,19 +1,15 @@
 package com.logistic.security.jwt;
 
+
 import com.logistic.exception.messages.ErrorMessages;
 import io.jsonwebtoken.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 public class JwtUtils {
@@ -21,9 +17,9 @@ public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
 
-    @Value("${logistic.app.jwtSecret}")
+    @Value("${ascarrent.app.jwtSecret}")
     private String jwtSecret;
-    @Value("${logistic.app.jwtExpirationMs}")
+    @Value("${ascarrent.app.jwtExpirationMs}")
     private Long jwtExpirationMs;
 
     // -- Generate JWT Token
