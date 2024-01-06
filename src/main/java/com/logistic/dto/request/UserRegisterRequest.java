@@ -28,7 +28,7 @@ public class UserRegisterRequest {
     @NotBlank(message = "Please provide your name")
     private String name;
 
-    @Size(min=5, max=180)
+    @Size(min = 5, max = 180, message = "The email '${validatedValue}' must be between {min} and {max} chars long")
     @Email(message = "Please provide a valid e-mail")
     private String email;
 
@@ -41,7 +41,7 @@ public class UserRegisterRequest {
     private LocalDate birthDate;
 
 
-    @Size(min = 5, max = 180, message = "The email '${validatedValue}' must be between {min} and {max} chars long")
+    @Size(min = 5, max = 180, message = "The password '${validatedValue}' must be between {min} and {max} chars long")
     @NotBlank(message = "Please provide a password")
     private String password;
 

@@ -1,7 +1,9 @@
 package com.logistic.controller;
 
+import com.logistic.dto.request.LoginRequest;
 import com.logistic.dto.request.UserRegisterRequest;
 import com.logistic.dto.response.LogiResponse;
+import com.logistic.dto.response.LoginResponse;
 import com.logistic.dto.response.ResponseMessage;
 import com.logistic.security.jwt.JwtUtils;
 import com.logistic.service.UserService;
@@ -37,6 +39,12 @@ public class UserJwtController {
                 response.setSuccess(true);
        return new ResponseEntity<>(response, HttpStatus.CREATED);
 
+    }
+
+    // LOGIN
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> authenticate(@Valid @RequestBody LoginRequest loginRequest) {
+        return new ResponseEntity<>(userService.authenticate(loginRequest), HttpStatus.OK);
     }
 
 

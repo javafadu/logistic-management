@@ -14,7 +14,7 @@ public class LogisticApplication {
         SpringApplication.run(LogisticApplication.class, args);
     }
 
-    /*
+
     @Bean
     public CommandLineRunner demo(UserService userService, RoleService roleService) {
         return (args) -> {
@@ -23,6 +23,6 @@ public class LogisticApplication {
         };
     }
 
-     */
+
 
 }

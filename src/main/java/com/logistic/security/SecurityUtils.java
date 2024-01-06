@@ -17,6 +17,7 @@ public class SecurityUtils {
         Authentication authentication = securityContext.getAuthentication();
 
         return Optional.ofNullable(extractPrincipal(authentication));
+        // Optional.ofNullable: prevent NullPointerException by creating and returning a null class
     }
 
     // Get userdetails (email) from authentication

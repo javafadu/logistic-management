@@ -17,6 +17,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = "roles") // make eager for default lazy (...ToMany) situation
     Optional<User> findByEmail(String email);
 
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.id=5")
+    List<User> findAdminUsers(int roleId);
+
+    @EntityGraph(attributePaths = "roles")
+    List<User> findAll();
 
 
 
