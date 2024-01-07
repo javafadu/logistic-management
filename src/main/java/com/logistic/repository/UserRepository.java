@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,8 +27,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAll();
 
     @EntityGraph(attributePaths = "roles")
-    @Query("SELECT u FROM User  where  lower(u.name) like %?1% OR lower(u.email) like %?1% OR lower(u.phone) like %?1% ")
-    Page<User> getSearchedUsersWithPaging(String q, Pageable pageable);
+    @Query("SELECT u FROM User u where  lower(u.name) like %:q% OR lower(u.email) like %:q% OR lower(u.phone) like %:q% ")
+    Page<User> getSearchedUsersWithPaging(@Param("q") String q, Pageable pageable);
+
 
     @EntityGraph(attributePaths = "roles")
     Page<User> findAll(Pageable pageable);
