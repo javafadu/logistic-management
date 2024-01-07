@@ -13,9 +13,11 @@ import com.logistic.exception.ConflictException;
 import com.logistic.exception.ResourceNotFoundException;
 import com.logistic.exception.messages.ErrorMessages;
 import com.logistic.repository.UserRepository;
+import com.logistic.security.SecurityUtils;
 import com.logistic.security.jwt.JwtUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +26,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -150,4 +151,42 @@ public class UserService {
         return userMapper.userListToUserDTOList(users);
 
     }
+
+    // Get Principal
+    public UserDTO getPrincipal() {
+
+        User user = getCurrentLoggedInUser();
+        return userMapper.userToUserDTO(user);
+
+    }
+
+
+    // Get Currently Logged in User (fix method)
+    public User getCurrentLoggedInUser() {
+        String email = SecurityUtils.getCurrentLoggedInUser().orElseThrow(()->
+                new ResourceNotFoundException(ErrorMessages.PRINCIPAL_NOT_FOUND_MESSAGE));
+
+        User user = getUserByEmail(email);
+        return user;
+    }
+
+
+    public Page<UserDTO> getAllUsersWithPaging(String q, Pageable pageable) {
+        Page<User> allUsersWithPaging = null;
+        if (!q.isEmpty()) {
+            allUsersWithPaging = userRepository.getSearchedUsersWithPaging(q.toLowerCase(), pageable);
+        } else {
+            allUsersWithPaging = userRepository.findAll(pageable);
+        }
+        return convertPageUserToPageUserDTO(allUsersWithPaging);
+    }
+
+    // convert Page<User> to Page<UserDTO> fixed method
+    private Page<UserDTO> convertPageUserToPageUserDTO(Page<User> users) {
+        return users.map(
+                user -> userMapper.userToUserDTO(user)
+        );
+    }
+
+
 }

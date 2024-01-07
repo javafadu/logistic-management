@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -107,6 +109,29 @@ public class LogisticExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleConflictException(ConflictException ex, WebRequest request) {
         ApiResponseError error =  new ApiResponseError(
                 HttpStatus.CONFLICT,
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return buildResponseEntity(error);
+    }
+
+
+    // child class for exception -7
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        ApiResponseError error =  new ApiResponseError(
+                HttpStatus.FORBIDDEN,
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return buildResponseEntity(error);
+    }
+
+    // child class for exception -8
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex, WebRequest request) {
+        ApiResponseError error =  new ApiResponseError(
+                HttpStatus.BAD_REQUEST,
                 ex.getMessage(),
                 request.getDescription(false)
         );
