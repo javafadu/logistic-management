@@ -189,4 +189,13 @@ public class UserService {
     }
 
 
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow( ()->
+                new ResourceNotFoundException(String.format(ErrorMessages.USER_WITH_ID_NOT_FOUND_EXCEPTION,id))
+        );
+
+
+       return userMapper.userToUserDTO(user);
+
+    }
 }
