@@ -1,7 +1,13 @@
 package com.logistic.controller;
 
 import com.logistic.dto.UserDTO;
+import com.logistic.dto.request.UpdatePasswordRequest;
+import com.logistic.dto.request.UserUpdateRequest;
+import com.logistic.dto.response.LogiResponse;
+import com.logistic.dto.response.LoginResponse;
+import com.logistic.dto.response.ResponseMessage;
 import com.logistic.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -62,6 +68,32 @@ public class UserController {
 
         UserDTO userDTO = userService.getUserById(id);
         return ResponseEntity.ok(userDTO);
+    }
+
+    // Update password
+    @PatchMapping("/auth")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<LogiResponse> updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+
+        userService.updatePassword(updatePasswordRequest);
+        LogiResponse logiResponse = new LogiResponse();
+        logiResponse.setMessage(ResponseMessage.PASSWORD_UPDATE_RESPONSE_MESSAGE);
+        logiResponse.setSuccess(true);
+
+        return ResponseEntity.ok(logiResponse);
+    }
+
+
+    // Update User
+    @PutMapping("/auth")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<LogiResponse> updateUser(@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+        userService.updateUser(userUpdateRequest);
+        LogiResponse logiResponse = new LogiResponse();
+        logiResponse.setSuccess(true);
+        logiResponse.setMessage(ResponseMessage.USER_UPDATE_RESPONSE_MESSAGE);
+
+        return ResponseEntity.ok(logiResponse);
     }
 
 

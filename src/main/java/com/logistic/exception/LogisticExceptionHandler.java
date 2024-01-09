@@ -139,6 +139,18 @@ public class LogisticExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
+    // child class for exception -9
+    @ExceptionHandler(BadRequestException.class)
+    protected ResponseEntity<Object> handleBadRequestException(BadRequestException ex, WebRequest request) {
+        ApiResponseError error =  new ApiResponseError(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return buildResponseEntity(error);
+    }
+
+
 
     // Father Class for exception
     @ExceptionHandler(RuntimeException.class)

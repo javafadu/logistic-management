@@ -6,9 +6,12 @@ import com.logistic.domain.enums.RoleType;
 import com.logistic.dto.UserDTO;
 import com.logistic.dto.mapper.UserMapper;
 import com.logistic.dto.request.LoginRequest;
+import com.logistic.dto.request.UpdatePasswordRequest;
 import com.logistic.dto.request.UserRegisterRequest;
+import com.logistic.dto.request.UserUpdateRequest;
 import com.logistic.dto.response.LoginResponse;
 import com.logistic.dto.response.UserResponse;
+import com.logistic.exception.BadRequestException;
 import com.logistic.exception.ConflictException;
 import com.logistic.exception.ResourceNotFoundException;
 import com.logistic.exception.messages.ErrorMessages;
@@ -162,7 +165,7 @@ public class UserService {
 
 
     // Get Currently Logged in User (fix method)
-    public User getCurrentLoggedInUser() {
+    private User getCurrentLoggedInUser() {
         String email = SecurityUtils.getCurrentLoggedInUser().orElseThrow(()->
                 new ResourceNotFoundException(ErrorMessages.PRINCIPAL_NOT_FOUND_MESSAGE));
 
@@ -196,6 +199,41 @@ public class UserService {
 
 
        return userMapper.userToUserDTO(user);
+
+    }
+
+
+    // Password Update
+    public void updatePassword(UpdatePasswordRequest updatePasswordRequest) {
+
+        User user = getCurrentLoggedInUser();
+
+        // check1 : check if there is any builtIn situation
+        // check2 : old password is the same in the stored password in db
+        if(!passwordEncoder.matches(updatePasswordRequest.getOldPassword(),user.getPassword())) {
+            throw new BadRequestException(ErrorMessages.PASSWORD_NOT_MATCHED_MESSAGE);
+        }
+        // check3: encode the new password
+        String encodedNewPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());
+
+        user.setPassword(encodedNewPassword);
+
+        userRepository.save(user);
+
+    }
+
+    // User Update
+    public void updateUser(UserUpdateRequest userUpdateRequest) {
+        User user = getCurrentLoggedInUser();
+
+        // check e-mail if exist or belongs to anyone
+       Boolean emailExist =  userRepository.existsByEmail(userUpdateRequest.getEmail());
+
+       if(emailExist && !userUpdateRequest.getEmail().equals(user.getEmail())) {
+           throw new ConflictException(String.format(ErrorMessages.EMAIL_ALREADY_EXIST_ERROR_MESSAGE,userUpdateRequest.getEmail()));
+       }
+
+       userRepository.update(user.getId(), user.getName(), user.getEmail(), user.getPhone(), user.getBirthDate() );
 
     }
 }
