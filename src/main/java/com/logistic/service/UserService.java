@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -223,6 +224,7 @@ public class UserService {
     }
 
     // User Update
+    @Transactional // for update and delete operation 
     public void updateUser(UserUpdateRequest userUpdateRequest) {
         User user = getCurrentLoggedInUser();
 
@@ -233,7 +235,11 @@ public class UserService {
            throw new ConflictException(String.format(ErrorMessages.EMAIL_ALREADY_EXIST_ERROR_MESSAGE,userUpdateRequest.getEmail()));
        }
 
-       userRepository.update(user.getId(), user.getName(), user.getEmail(), user.getPhone(), user.getBirthDate() );
+       userRepository.update(user.getId(),
+               userUpdateRequest.getName(),
+               userUpdateRequest.getEmail(),
+               userUpdateRequest.getPhone(),
+               userUpdateRequest.getBirthDate() );
 
     }
 }

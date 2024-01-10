@@ -37,7 +37,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findAll(Pageable pageable);
 
 
-    @Modifying
+    @Modifying // When DML operation with a custom query in JPARepository, we use it
     @Query("UPDATE User u SET u.name=:name, u.email=:email, u.phone=:phone, u.birthDate=:birthDate WHERE u.id=:id")
     void update(@Param("id") Long id,
                 @Param("name") String name,
