@@ -1,5 +1,6 @@
 package com.logistic.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.logistic.domain.Role;
 import com.logistic.domain.User;
 import com.logistic.domain.enums.RoleType;
@@ -24,6 +25,9 @@ public class UserResponse {
     private String email;
     private String phone;
     private LocalDate birthDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern =
+            "yyyy-MM-dd HH:mm:ss", timezone = "Turkey")
     private LocalDateTime registerDate;
     private String status;
     private Set<String> roles;

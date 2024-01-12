@@ -1,6 +1,7 @@
 package com.logistic.controller;
 
 import com.logistic.dto.UserDTO;
+import com.logistic.dto.request.AdminUserUpdateRequest;
 import com.logistic.dto.request.UpdatePasswordRequest;
 import com.logistic.dto.request.UserUpdateRequest;
 import com.logistic.dto.response.LogiResponse;
@@ -70,7 +71,7 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
 
-    // Update password
+    // Update password User own password
     @PatchMapping("/auth")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<LogiResponse> updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
@@ -84,7 +85,7 @@ public class UserController {
     }
 
 
-    // Update User
+    // Update User own information
     @PutMapping("/auth")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<LogiResponse> updateUser(@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
@@ -92,6 +93,32 @@ public class UserController {
         LogiResponse logiResponse = new LogiResponse();
         logiResponse.setSuccess(true);
         logiResponse.setMessage(ResponseMessage.USER_UPDATE_RESPONSE_MESSAGE);
+
+        return ResponseEntity.ok(logiResponse);
+    }
+
+
+    // Update any User by an Admin
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<LogiResponse> updateUserByAdmin(@PathVariable Long id, @Valid @RequestBody AdminUserUpdateRequest adminUserUpdateRequest) {
+        userService.adminUserUpdate(id, adminUserUpdateRequest);
+        LogiResponse logiResponse = new LogiResponse();
+        logiResponse.setMessage(ResponseMessage.USER_UPDATE_RESPONSE_MESSAGE);
+        logiResponse.setSuccess(true);
+
+        return ResponseEntity.ok(logiResponse);
+
+    }
+
+    // Delete a user with Id
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<LogiResponse> deleteUser(@PathVariable Long id) {
+        LogiResponse logiResponse = new LogiResponse();
+        userService.deleteAccountById(id);
+        logiResponse.setSuccess(true);
+        logiResponse.setMessage(ResponseMessage.USER_DELETE_RESPONSE_MESSAGE);
 
         return ResponseEntity.ok(logiResponse);
     }

@@ -45,6 +45,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 @Param("phone") String phone,
                 @Param("birthDate") LocalDate birtDate);
 
-
+    @EntityGraph(attributePaths = "id") // do not bring roles
+    Optional<User> findUserById(Long id);
 
 }

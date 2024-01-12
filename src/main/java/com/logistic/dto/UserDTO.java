@@ -1,5 +1,6 @@
 package com.logistic.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.logistic.domain.Address;
 import com.logistic.domain.Role;
 import jakarta.persistence.*;
@@ -36,7 +37,10 @@ public class UserDTO {
 
     private List<Address> addresses;
 
+    private String resetPasswordCode;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern =
+            "yyyy-MM-dd HH:mm:ss", timezone = "Turkey")
     private LocalDateTime registerDate;
 
     private String status;

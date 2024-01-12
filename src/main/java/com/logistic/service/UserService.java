@@ -5,10 +5,7 @@ import com.logistic.domain.User;
 import com.logistic.domain.enums.RoleType;
 import com.logistic.dto.UserDTO;
 import com.logistic.dto.mapper.UserMapper;
-import com.logistic.dto.request.LoginRequest;
-import com.logistic.dto.request.UpdatePasswordRequest;
-import com.logistic.dto.request.UserRegisterRequest;
-import com.logistic.dto.request.UserUpdateRequest;
+import com.logistic.dto.request.*;
 import com.logistic.dto.response.LoginResponse;
 import com.logistic.dto.response.UserResponse;
 import com.logistic.exception.BadRequestException;
@@ -55,6 +52,7 @@ public class UserService {
         this.jwtUtils=jwtUtils;
     }
 
+    // Get User by Email
     public User getUserByEmail(String email) {
 
         User user = userRepository.findByEmail(email).orElseThrow(() ->
@@ -128,6 +126,7 @@ public class UserService {
     }
 
 
+    // Login Service
     public LoginResponse authenticate(LoginRequest loginRequest) {
         // STEP1 : get username and password and authenticate
         // (convert email and password --> username and password in spring securitt)
@@ -166,7 +165,7 @@ public class UserService {
 
 
     // Get Currently Logged in User (fix method)
-    private User getCurrentLoggedInUser() {
+    public User getCurrentLoggedInUser() {
         String email = SecurityUtils.getCurrentLoggedInUser().orElseThrow(()->
                 new ResourceNotFoundException(ErrorMessages.PRINCIPAL_NOT_FOUND_MESSAGE));
 
@@ -223,8 +222,8 @@ public class UserService {
 
     }
 
-    // User Update
-    @Transactional // for update and delete operation 
+    // User Update by authenticated user
+    @Transactional // for update and delete operation, all queries roll back in case of any exception issue
     public void updateUser(UserUpdateRequest userUpdateRequest) {
         User user = getCurrentLoggedInUser();
 
@@ -241,5 +240,83 @@ public class UserService {
                userUpdateRequest.getPhone(),
                userUpdateRequest.getBirthDate() );
 
+    }
+
+    // User update by admin
+    public void adminUserUpdate(Long id, AdminUserUpdateRequest adminUserUpdateRequest) {
+        // check1: if user exist or not
+       User user = getById(id);
+
+       // check2: e-mail control
+        Boolean emailExist =  userRepository.existsByEmail(adminUserUpdateRequest.getEmail());
+
+        if(emailExist && !adminUserUpdateRequest.getEmail().equals(user.getEmail())) {
+            throw new ConflictException(String.format(ErrorMessages.EMAIL_ALREADY_EXIST_ERROR_MESSAGE,adminUserUpdateRequest.getEmail()));
+        }
+        // check3: password is null or not
+        if(adminUserUpdateRequest.getPassword()==null) {
+            adminUserUpdateRequest.setPassword(user.getPassword());
+        } else {
+            String encodedPassword= passwordEncoder.encode(adminUserUpdateRequest.getPassword());
+            adminUserUpdateRequest.setPassword(encodedPassword);
+        }
+        // check4: roles
+        Set<String> userStrRoles = adminUserUpdateRequest.getRoles();
+        Set<Role> convertedRoles = convertRoles(userStrRoles);
+
+        user.setName(adminUserUpdateRequest.getName());
+        user.setEmail(adminUserUpdateRequest.getEmail());
+        user.setPhone(adminUserUpdateRequest.getPhone());
+        user.setBirthDate(adminUserUpdateRequest.getBirthDate());
+        user.setPassword(adminUserUpdateRequest.getPassword());
+        user.setRoles(convertedRoles);
+
+        userRepository.save(user);
+
+    }
+
+    private Set<Role> convertRoles(Set<String> pRoles) { // pRoles={"User", "Administrator"}
+        Set<Role> roles = new HashSet<>();
+
+        if(pRoles==null) {
+            Role userRole = roleService.findByType(RoleType.ROLE_USER);
+            roles.add(userRole);
+        } else {
+            pRoles.forEach(roleStr-> {
+                if(roleStr.equals(RoleType.ROLE_USER.getName())) {
+                    Role userRole = roleService.findByType(RoleType.ROLE_USER);
+                    roles.add(userRole);
+                } else if(roleStr.equals(RoleType.ROLE_ADMIN.getName())) {
+                    Role adminRole = roleService.findByType(RoleType.ROLE_ADMIN);
+                    roles.add(adminRole);
+                } else if(roleStr.equals(RoleType.ROLE_CUSTOMER.getName())) {
+                    Role customerRole = roleService.findByType(RoleType.ROLE_CUSTOMER);
+                    roles.add(customerRole);
+                } else if(roleStr.equals(RoleType.ROLE_SUPPLIER.getName())) {
+                    Role supplierRole = roleService.findByType(RoleType.ROLE_SUPPLIER);
+                    roles.add(supplierRole);
+                } else if (roleStr.equals(RoleType.ROLE_MANAGER.getName())) {
+                    Role managerROle = roleService.findByType(RoleType.ROLE_MANAGER);
+                    roles.add(managerROle);
+                }
+            });
+        }
+            return roles;
+    }
+
+    public User getById(Long id) {
+        User user = userRepository.findUserById(id).orElseThrow(()->
+                 new ResourceNotFoundException(String.format(ErrorMessages.USER_WITH_ID_NOT_FOUND_EXCEPTION,id)));
+
+        return user;
+
+    }
+
+    // Delete a user
+    public void deleteAccountById(Long id) {
+        User user = getById(id);
+
+        // check user has address or order or others if any transaction related to user then delete it
+        userRepository.deleteById(id);
     }
 }

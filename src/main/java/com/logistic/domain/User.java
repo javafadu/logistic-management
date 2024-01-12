@@ -1,5 +1,6 @@
 package com.logistic.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,6 +43,10 @@ public class User {
 
     @Column(length = 120, nullable = false)
     private String password;
+
+    @Column
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String resetPasswordCode;
 
     @Column(nullable = false)
     private LocalDateTime registerDate;
