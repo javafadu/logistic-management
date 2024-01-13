@@ -3,6 +3,8 @@ package com.logistic.service;
 import com.logistic.domain.Address;
 import com.logistic.domain.Location;
 import com.logistic.domain.User;
+import com.logistic.dto.AddressDTO;
+import com.logistic.dto.mapper.AddressMapper;
 import com.logistic.dto.request.AddressRequest;
 import com.logistic.exception.ConflictException;
 import com.logistic.exception.messages.ErrorMessages;
@@ -17,10 +19,12 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
     private final UserService userService;
+    private final AddressMapper addressMapper;
 
-    public AddressService(AddressRepository addressRepository, UserService userService) {
+    public AddressService(AddressRepository addressRepository, UserService userService, AddressMapper addressMapper) {
         this.addressRepository = addressRepository;
         this.userService = userService;
+        this.addressMapper = addressMapper;
     }
 
     // Add Address
@@ -66,6 +70,28 @@ public class AddressService {
 
         addressRepository.updateUserAddress(addressId,addressRequest.getType(),addressRequest.getCountry(),addressRequest.getState(),addressRequest.getCity(),addressRequest.getDistrict(),addressRequest.getZipCode(),addressRequest.getAddress(),addressRequest.getLatitude(),addressRequest.getLongitude());
 
+
+    }
+
+    public void updateUserAddress(Long userId, Long addressId, AddressRequest addressRequest) {
+        //check1 : user exist or not
+        User user = userService.getById(userId);
+
+        // check2 : address id belongs to the user
+        List<Long> userAddressIds = addressRepository.userAddressIds(user.getId());
+        if(!userAddressIds.contains(addressId)) {
+            throw new ConflictException(String.format(ErrorMessages.ADDRESS_ID_CONFLICT_MESSAGE,addressId));
+        }
+        addressRepository.updateUserAddress(addressId,addressRequest.getType(),addressRequest.getCountry(),addressRequest.getState(),addressRequest.getCity(),addressRequest.getDistrict(),addressRequest.getZipCode(),addressRequest.getAddress(),addressRequest.getLatitude(),addressRequest.getLongitude());
+
+
+    }
+
+    public List<AddressDTO> getUserOwnAddresses() {
+        User user = userService.getCurrentLoggedInUser();
+        List<Address> userAddresses = addressRepository.userAddresses(user.getId());
+
+        return addressMapper.addressListToAddressDTOList(userAddresses);
 
     }
 }

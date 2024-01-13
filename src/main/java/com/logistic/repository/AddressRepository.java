@@ -29,4 +29,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
     @Query("SELECT a.id FROM Address a WHERE a.user.id=:id")
     List<Long> userAddressIds(@Param("id") Long id);
 
+    @Query("SELECT a from Address a INNER JOIN User u ON a.user.id = u.id WHERE u.id=:userId")
+    List<Address> userAddresses(@Param("userId") Long userId);
+
 }
