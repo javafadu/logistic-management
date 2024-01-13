@@ -34,7 +34,7 @@ public class AddressController {
     // Admin add an address for a user
     @PostMapping("/add/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<LogiResponse> adminAddUserAddress (@PathVariable("id") Long userId, @Valid @RequestBody AddressRequest addressRequest) {
+    public ResponseEntity<LogiResponse> adminAddUserAddress(@PathVariable("id") Long userId, @Valid @RequestBody AddressRequest addressRequest) {
         addressService.addAddressForUser(userId, addressRequest);
         LogiResponse logiResponse = new LogiResponse();
         logiResponse.setMessage(ResponseMessage.ADDRESS_ADDED_RESPONSE_MESSAGE);
@@ -43,5 +43,14 @@ public class AddressController {
     }
 
     // User Update own address
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<LogiResponse> updateOwnAddress(@PathVariable("id") Long addressId,@Valid @RequestBody AddressRequest addressRequest) {
+        addressService.updateOwnAddress(addressId, addressRequest);
+        LogiResponse logiResponse = new LogiResponse();
+        logiResponse.setSuccess(true);
+        logiResponse.setMessage(ResponseMessage.ADDRESS_UPDATED_RESPONSE_MESSAGE);
+        return ResponseEntity.ok(logiResponse);
+    }
 
 }

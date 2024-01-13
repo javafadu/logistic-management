@@ -4,8 +4,13 @@ import com.logistic.domain.Address;
 import com.logistic.domain.Location;
 import com.logistic.domain.User;
 import com.logistic.dto.request.AddressRequest;
+import com.logistic.exception.ConflictException;
+import com.logistic.exception.messages.ErrorMessages;
 import com.logistic.repository.AddressRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class AddressService {
@@ -46,6 +51,21 @@ public class AddressService {
         address.setUser(user);
 
         addressRepository.save(address);
+
+    }
+
+    @Transactional
+    public void updateOwnAddress(Long addressId, AddressRequest addressRequest) {
+        User user = userService.getCurrentLoggedInUser();
+
+        // check1: addressId belongs to the logged-in user or not
+        List<Long> userAddressIds = addressRepository.userAddressIds(user.getId());
+        if(!userAddressIds.contains(addressId)) {
+            throw new ConflictException(String.format(ErrorMessages.ADDRESS_ID_CONFLICT_MESSAGE,addressId));
+        }
+
+        addressRepository.updateUserAddress(addressId,addressRequest.getType(),addressRequest.getCountry(),addressRequest.getState(),addressRequest.getCity(),addressRequest.getDistrict(),addressRequest.getZipCode(),addressRequest.getAddress(),addressRequest.getLatitude(),addressRequest.getLongitude());
+
 
     }
 }
