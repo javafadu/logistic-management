@@ -3,6 +3,7 @@ package com.logistic.dto.mapper;
 import com.logistic.domain.Address;
 import com.logistic.dto.AddressDTO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -10,5 +11,7 @@ import java.util.List;
 public interface AddressMapper {
 
     List<AddressDTO> addressListToAddressDTOList(List<Address> address);
+
+    AddressDTO addressToAddressDTO(Address address);
 
 }

@@ -7,6 +7,7 @@ import com.logistic.dto.AddressDTO;
 import com.logistic.dto.mapper.AddressMapper;
 import com.logistic.dto.request.AddressRequest;
 import com.logistic.exception.ConflictException;
+import com.logistic.exception.ResourceNotFoundException;
 import com.logistic.exception.messages.ErrorMessages;
 import com.logistic.repository.AddressRepository;
 import org.springframework.stereotype.Service;
@@ -61,18 +62,10 @@ public class AddressService {
     @Transactional
     public void updateOwnAddress(Long addressId, AddressRequest addressRequest) {
         User user = userService.getCurrentLoggedInUser();
-
-        // check1: addressId belongs to the logged-in user or not
-        List<Long> userAddressIds = addressRepository.userAddressIds(user.getId());
-        if(!userAddressIds.contains(addressId)) {
-            throw new ConflictException(String.format(ErrorMessages.ADDRESS_ID_CONFLICT_MESSAGE,addressId));
-        }
-
-        addressRepository.updateUserAddress(addressId,addressRequest.getType(),addressRequest.getCountry(),addressRequest.getState(),addressRequest.getCity(),addressRequest.getDistrict(),addressRequest.getZipCode(),addressRequest.getAddress(),addressRequest.getLatitude(),addressRequest.getLongitude());
-
-
+        updateUserAddress(user.getId(), addressId,addressRequest);
     }
 
+    @Transactional
     public void updateUserAddress(Long userId, Long addressId, AddressRequest addressRequest) {
         //check1 : user exist or not
         User user = userService.getById(userId);
@@ -89,9 +82,34 @@ public class AddressService {
 
     public List<AddressDTO> getUserOwnAddresses() {
         User user = userService.getCurrentLoggedInUser();
+        return getAddressesOfAUser(user.getId());
+    }
+
+
+    public List<AddressDTO> getAddressesOfAUser(Long userId) {
+        User user = userService.getById(userId);
         List<Address> userAddresses = addressRepository.userAddresses(user.getId());
 
         return addressMapper.addressListToAddressDTOList(userAddresses);
+    }
 
+
+    public AddressDTO getUserOwnAddress(Long addressId) {
+        // check1: addressId belongs to the logged-in user or not
+        User user = userService.getCurrentLoggedInUser();
+        return getUserAddress(user.getId(), addressId);
+    }
+
+    public AddressDTO getUserAddress(Long userId, Long addressId) {
+
+        User user = userService.getById(userId);
+        List<Long> userAddressIds = addressRepository.userAddressIds(user.getId());
+        if(!userAddressIds.contains(addressId)) {
+            throw new ConflictException(String.format(ErrorMessages.ADDRESS_ID_CONFLICT_MESSAGE,addressId));
+        }
+        Address address = addressRepository.findById(addressId).orElseThrow(()->
+                new ResourceNotFoundException(String.format(ErrorMessages.RESOURCE_NOT_FOUND_EXCEPTION,addressId)));
+
+        return addressMapper.addressToAddressDTO(address);
     }
 }

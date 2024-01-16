@@ -75,4 +75,31 @@ public class AddressController {
         return ResponseEntity.ok(userAddresses);
     }
 
+    // Get Address of a user
+    @GetMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<AddressDTO>> userAddressesByAdmin(@PathVariable("userId") Long userId) {
+        List<AddressDTO> userAddresses = addressService.getAddressesOfAUser(userId);
+        return ResponseEntity.ok(userAddresses);
+    }
+
+
+    // Get an Addresses in own addresses
+    @GetMapping()
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<AddressDTO> userAddress(@RequestParam("addressId") Long addressId) {
+        AddressDTO userAddress = addressService.getUserOwnAddress(addressId);
+        return ResponseEntity.ok(userAddress);
+    }
+
+    // Get an Addresses in own addresses
+    @GetMapping()
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AddressDTO> userAddress(@RequestParam("userId") Long userId,@RequestParam("addressId") Long addressId) {
+        AddressDTO userAddress = addressService.getUserAddress(userId,addressId);
+        return ResponseEntity.ok(userAddress);
+    }
+
+
+
 }
