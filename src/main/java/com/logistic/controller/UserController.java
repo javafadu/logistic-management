@@ -37,9 +37,9 @@ public class UserController {
         return ResponseEntity.ok(allUsers);
     }
 
-    // Get Authenticated User Info (Logged in User)
+    // Get Authenticated User Info (Logged-in User)
     @GetMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserDTO> getAuthUserInfo() {
         UserDTO userDTO = userService.getPrincipal();
         return ResponseEntity.ok(userDTO);
@@ -73,7 +73,7 @@ public class UserController {
 
     // Update password User own password
     @PatchMapping("/auth")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<LogiResponse> updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
 
         userService.updatePassword(updatePasswordRequest);
@@ -87,7 +87,7 @@ public class UserController {
 
     // Update User own information
     @PutMapping("/auth")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<LogiResponse> updateUser(@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         userService.updateUser(userUpdateRequest);
         LogiResponse logiResponse = new LogiResponse();
