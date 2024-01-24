@@ -68,14 +68,14 @@ public class AddressController {
     }
 
     // Get User Own Addresses
-    @GetMapping()
+    @GetMapping("/auth")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<AddressDTO>> userAddresses() {
         List<AddressDTO> userAddresses = addressService.getUserOwnAddresses();
         return ResponseEntity.ok(userAddresses);
     }
 
-    // Get Address of a user by Admin or Manager
+    // Get Addresses of a user by Admin or Manager
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<List<AddressDTO>> userAddressesByAdmin(@PathVariable("userId") Long userId) {
@@ -85,20 +85,44 @@ public class AddressController {
 
 
     // Get an address in own Addresses
-    @GetMapping()
+    @GetMapping("/auth/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<AddressDTO> userAddress(@RequestParam("addressId") Long addressId) {
+    public ResponseEntity<AddressDTO> userAddress(@PathVariable("id") Long addressId) {
         AddressDTO userAddress = addressService.getUserOwnAddress(addressId);
         return ResponseEntity.ok(userAddress);
     }
 
+
     // Get an address of a user by Admin or Manager
-    @GetMapping()
+    @GetMapping("/{userId}/{addressId}")
     @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
-    public ResponseEntity<AddressDTO> userAddress(@RequestParam("userId") Long userId,@RequestParam("addressId") Long addressId) {
+    public ResponseEntity<AddressDTO> userAddress(@PathVariable("userId") Long userId, @PathVariable("addressId") Long addressId) {
         AddressDTO userAddress = addressService.getUserAddress(userId,addressId);
         return ResponseEntity.ok(userAddress);
     }
+
+    // Delete an address by User
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<LogiResponse> deleteAnAddressByUser(@PathVariable("id") Long addressId) {
+        addressService.deleteAddressById(addressId);
+        LogiResponse logiResponse = new LogiResponse();
+        logiResponse.setMessage(ResponseMessage.ADDRESS_DELETED_RESPONSE_MESSAGE);
+        logiResponse.setSuccess(true);
+        return ResponseEntity.ok(logiResponse);
+    }
+
+    // Delete an address by Admin
+    @DeleteMapping("/{userId}/{addressId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<LogiResponse> deleteAnAddressByAdmin(@PathVariable("userId") Long userId, @PathVariable("addressId") Long addressId) {
+        addressService.deleteAddressByAdmin(userId,addressId);
+        LogiResponse logiResponse = new LogiResponse();
+        logiResponse.setMessage(ResponseMessage.ADDRESS_DELETED_RESPONSE_MESSAGE);
+        logiResponse.setSuccess(true);
+        return ResponseEntity.ok(logiResponse);
+    }
+
 
 
 

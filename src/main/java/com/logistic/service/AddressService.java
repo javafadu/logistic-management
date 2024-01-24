@@ -112,4 +112,39 @@ public class AddressService {
 
         return addressMapper.addressToAddressDTO(address);
     }
+
+    // DELETE ADDRESS by User
+    public void deleteAddressById(Long addressId) {
+        User user = userService.getCurrentLoggedInUser();
+        if(checkUserAddress(user.getId(),addressId)) {
+            addressRepository.deleteById(addressId);
+        } else {
+            throw new ConflictException(String.format(ErrorMessages.ADDRESS_ID_CONFLICT_MESSAGE,addressId));
+        }
+    }
+
+    // DELETE ADDRESS by Admin
+    public void deleteAddressByAdmin(Long userId, Long addressId) {
+        if(checkUserAddress(userId,addressId)) {
+            addressRepository.deleteById(addressId);
+        } else {
+            throw new ConflictException(String.format(ErrorMessages.ADDRESS_ID_CONFLICT_MESSAGE,addressId));
+        }
+    }
+
+
+    // CHECK ADDRESSID belongs to USERID
+    public Boolean checkUserAddress(Long userId, Long addressId) {
+
+        User user = userService.getById(userId);
+        List<Long> userAddressIds = addressRepository.userAddressIds(user.getId());
+        if(!userAddressIds.contains(addressId)) {
+            throw new ConflictException(String.format(ErrorMessages.ADDRESS_ID_CONFLICT_MESSAGE,addressId));
+        }
+        Address address = addressRepository.findById(addressId).orElseThrow(()->
+                new ResourceNotFoundException(String.format(ErrorMessages.RESOURCE_NOT_FOUND_EXCEPTION,addressId)));
+
+        return true;
+    }
+
 }
