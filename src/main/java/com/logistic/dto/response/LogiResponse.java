@@ -13,6 +13,6 @@ public class LogiResponse {
 
     private String message;
 
-    private boolean success;
+    private Boolean success;
 
 }
