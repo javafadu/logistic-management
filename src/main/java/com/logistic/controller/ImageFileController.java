@@ -1,15 +1,17 @@
 package com.logistic.controller;
 
+import com.logistic.domain.ImageFile;
+import com.logistic.dto.ImageFileDTO;
 import com.logistic.dto.response.ImageSavedResponse;
+import com.logistic.dto.response.LogiResponse;
 import com.logistic.dto.response.ResponseMessage;
 import com.logistic.service.ImageFileService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/files")
@@ -22,7 +24,7 @@ public class ImageFileController {
         this.imageFileService = imageFileService;
     }
 
-    // UPLOAD Image
+    // UPLOAD Image  // c28445e9-75b7-447c-9338-0d1901ed6698
     @PostMapping("/upload")
     @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<ImageSavedResponse> uploadFile(@RequestParam("file") MultipartFile file) {
@@ -35,5 +37,56 @@ public class ImageFileController {
         return ResponseEntity.ok(imageSavedResponse);
 
     }
+
+    // DOWNLOAD Image
+    @GetMapping("/download/{id}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable String id) {
+
+        ImageFile imageFile = imageFileService.getImageFileById(id);
+
+        return ResponseEntity.ok().header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "attachment;filename="+imageFile.getName())
+                .body(imageFile.getImageData().getData());
+
+    }
+
+    // DISPLAY IMAGE
+    @GetMapping("/display/{id}")
+    public ResponseEntity<byte[]> displayFile(@PathVariable String id) {
+        ImageFile imageFile = imageFileService.getImageFileById(id);
+
+        HttpHeaders header  = new HttpHeaders();
+        header.setContentType(MediaType.IMAGE_PNG);
+
+        return new ResponseEntity<>(imageFile.getImageData().getData(),header, HttpStatus.OK);
+    }
+
+
+    // GET ALL IMAGES by Manager and Admin
+    @GetMapping
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    public ResponseEntity<List<ImageFileDTO>> getAllImages() {
+
+        List<ImageFileDTO>  allImageDTOS = imageFileService.getAllImages();
+
+        return ResponseEntity.ok(allImageDTOS);
+
+    }
+
+    // DELETE Image
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    public ResponseEntity<LogiResponse> deleteImageFile(@PathVariable String id) {
+        imageFileService.deleteImageFile(id);
+        LogiResponse logiResponse = new LogiResponse();
+        logiResponse.setMessage(ResponseMessage.IMAGE_DELETED_RESPONSE_MESSAGE);
+        logiResponse.setSuccess(true);
+
+        return ResponseEntity.ok(logiResponse);
+    }
+
+
+
 
 }

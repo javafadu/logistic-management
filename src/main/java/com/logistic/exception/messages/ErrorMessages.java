@@ -11,6 +11,7 @@ public class ErrorMessages {
     public final static String PRINCIPAL_NOT_FOUND_MESSAGE = "User not found";
     public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Your Passwords are not matched";
     public final static String ADDRESS_ID_CONFLICT_MESSAGE = "Address Id : %s is not matched the user";
+    public final static String IMAGE_NOT_FOUND_MESSAGE = "The image Id : %s is not found";
 
 
 }

@@ -14,6 +14,7 @@ public class ResponseMessage {
     public final static String ADDRESS_UPDATED_RESPONSE_MESSAGE = "The address was updated successfully";
     public final static String ADDRESS_DELETED_RESPONSE_MESSAGE = "The address was deleted successfully";
     public final static String IMAGE_SAVED_RESPONSE_MESSAGE = "The image was uploaded successfully";
+    public final static String IMAGE_DELETED_RESPONSE_MESSAGE = "The image was deleted successfully";
 
 
 }
