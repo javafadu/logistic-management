@@ -1,5 +1,6 @@
 package com.logistic.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -43,10 +44,17 @@ public class Address {
 
     private Location location;
 
-    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    @JsonBackReference
+    private User user = null;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Customer customer = null;
+
+
 
 
 }

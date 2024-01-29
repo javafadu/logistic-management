@@ -38,7 +38,7 @@ public class User {
     @Column(nullable = true)
     private LocalDate birthDate;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private List<Address> addresses;
 
     @Column(length = 120, nullable = false)

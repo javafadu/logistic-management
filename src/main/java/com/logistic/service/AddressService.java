@@ -52,7 +52,7 @@ public class AddressService {
         address.setZipCode(addressRequest.getZipCode());
         address.setAddress(addressRequest.getAddress());
         address.setLocation(location);
-
+        address.setCustomer(null);
         address.setUser(user);
 
         addressRepository.save(address);
