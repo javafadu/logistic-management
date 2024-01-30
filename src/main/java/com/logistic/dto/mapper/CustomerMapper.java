@@ -2,9 +2,9 @@ package com.logistic.dto.mapper;
 
 import com.logistic.domain.Address;
 import com.logistic.domain.Company;
-import com.logistic.domain.Customer;
+import com.logistic.domain.Client;
 import com.logistic.domain.ImageFile;
-import com.logistic.dto.CustomerDTO;
+import com.logistic.dto.ClientDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -22,18 +22,18 @@ public interface CustomerMapper {
     @Mapping(target = "images", ignore = true)
     @Mapping(target = "addresses", ignore = true)
     @Mapping(target = "company", ignore = true)
-    Customer customerDTOToCustomer(CustomerDTO customerDTO);
+    Client customerDTOToCustomer(ClientDTO clientDTO);
 
 
     // convert List-DTO to list Pojo
-    List<CustomerDTO> customersToCustomerDTOS(List<Customer> customers);
+    List<ClientDTO> customersToCustomerDTOS(List<Client> customers);
 
 
     // convert CustomerDTO to Customer
     @Mapping(source = "images", target = "images", qualifiedByName = "getImagesAsString")
     @Mapping(source = "addresses", target = "addresses", qualifiedByName = "getAddressesAsLong")
     @Mapping(source = "company", target = "company", qualifiedByName = "getCompanyAsLong")
-    CustomerDTO customerToCustomerDTO(Customer customer);
+    ClientDTO customerToCustomerDTO(Client client);
 
 
     @Named("getImagesAsString")

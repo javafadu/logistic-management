@@ -1,10 +1,5 @@
 package com.logistic.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.logistic.domain.Address;
-import com.logistic.domain.Company;
-import com.logistic.domain.ImageFile;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -20,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class CustomerDTO {
+public class ClientDTO {
 
     private Long id;
 

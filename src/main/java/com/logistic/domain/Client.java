@@ -1,12 +1,12 @@
 package com.logistic.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -16,8 +16,8 @@ import java.util.Set;
 @NoArgsConstructor
 
 @Entity
-@Table(name="tbl_customers")
-public class Customer {
+@Table(name="tbl_clients")
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,17 +26,18 @@ public class Customer {
     @Column(length = 180, nullable = false)
     private String name;
 
+    private String type;
 
     private String category;
 
-    @OneToMany(mappedBy = "customer")
-    private List<Address> addresses;
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses = new ArrayList<>();
 
     @OneToOne
     private Company company;
 
     @OneToMany (orphanRemoval = true)
-    @JoinColumn(name="customer_id")
+    @JoinColumn(name="client_id")
     private Set<ImageFile> images;
 
 }

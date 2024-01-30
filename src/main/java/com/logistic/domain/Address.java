@@ -1,7 +1,6 @@
 package com.logistic.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,9 +49,9 @@ public class Address {
     private User user = null;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
     @JsonBackReference
-    private Customer customer = null;
+    private Client client = null;
 
 
 
