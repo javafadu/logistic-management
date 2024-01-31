@@ -26,6 +26,7 @@ public class Client {
     @Column(length = 180, nullable = false)
     private String name;
 
+    @Column(length = 90, nullable = false)
     private String type;
 
     private String category;

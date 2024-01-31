@@ -1,5 +1,6 @@
 package com.logistic.dto;
 
+import com.logistic.domain.Address;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,9 @@ public class ClientDTO {
     @NotBlank(message = "Please provide the name")
     private String name;
 
+    @Size(max=80, message="size is exceeded")
+    @NotBlank(message = "Please provide the type of client")
+    private String type;
 
     private String category;
 
