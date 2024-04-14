@@ -24,7 +24,7 @@ public class ImageFileController {
         this.imageFileService = imageFileService;
     }
 
-    // UPLOAD Image  // c28445e9-75b7-447c-9338-0d1901ed6698
+    // UPLOAD Image  // 48567ba3-efcc-42bc-b231-a9d8f0786f5e
     @PostMapping("/upload")
     @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<ImageSavedResponse> uploadFile(@RequestParam("file") MultipartFile file) {

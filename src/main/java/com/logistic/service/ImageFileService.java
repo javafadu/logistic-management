@@ -68,7 +68,8 @@ public class ImageFileService {
             String imageURI = ServletUriComponentsBuilder
                     .fromCurrentContextPath() //localhost:8080
                     .path("/files/download/") //localhost:8080/files/download/
-                    .path(imFile.getId()).toUriString();
+                    .path(imFile.getId()) // https://eroticmv.com/hidden-obsessions-1992/48567ba3-efcc-42bc-b231-a9d8f0786f5e
+                    .toUriString();
 
                 return new ImageFileDTO(imFile.getName(), imageURI,imFile.getType(), imFile.getLength());
                 }).collect(Collectors.toList());
