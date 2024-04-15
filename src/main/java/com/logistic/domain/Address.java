@@ -53,6 +53,11 @@ public class Address {
     @JsonBackReference
     private Client client = null;
 
+    @ManyToOne
+    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Supplier supplier = null;
+
 
 
 

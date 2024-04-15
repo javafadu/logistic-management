@@ -12,6 +12,7 @@ public class ErrorMessages {
     public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Your Passwords are not matched";
     public final static String ADDRESS_ID_CONFLICT_MESSAGE = "Address Id : %s is not matched the user";
     public final static String IMAGE_NOT_FOUND_MESSAGE = "The image Id : %s is not found";
+    public final static String COMPANY_NOT_FOUND_MESSAGE = "The company Id : %s is not found";
 
 
 }

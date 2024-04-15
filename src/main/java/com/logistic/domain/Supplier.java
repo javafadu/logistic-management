@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,8 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 
 @Entity
-@Table(name="tbl_companies")
-public class Company {
+@Table(name = "tbl_suppliers")
+public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,21 +27,24 @@ public class Company {
     @Column(length = 180, nullable = false)
     private String name;
 
-    private String taxOffice;
+    @Column(length = 90, nullable = false)
+    private String type;
 
-    private String taxNo;
+    @Column(length = 90)
+    private String category;
 
-    private String phone;
-
-    private String email;
-
-    private String webSite;
-
+    @Column(nullable = false)
     private LocalDateTime registerDate;
 
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses = new ArrayList<>();
 
+    @OneToOne
+    private Company company;
 
-
+    @OneToMany (orphanRemoval = true)
+    @JoinColumn(name="client_id")
+    private Set<ImageFile> images;
 
 
 
